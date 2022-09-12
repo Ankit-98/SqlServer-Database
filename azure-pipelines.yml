@@ -5,27 +5,46 @@
 
 trigger:
 - master
+stages: 
+- stage: Build
+  jobs:
+  - job: Build
 
-pool:
-  vmImage: 'windows-2019'
+    pool:
+      vmImage: 'windows-2019'
 
-variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+    variables:
+      solution: '**/*.sln'
+      buildPlatform: 'Any CPU'
+      buildConfiguration: 'Release'
 
-steps:
-- task: NuGetToolInstaller@1
+    steps:
+    - task: NuGetToolInstaller@1
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
+    - task: NuGetCommand@2
+      inputs:
+        restoreSolution: '$(solution)'
 
-- task: MSBuild@1
-  displayName: 'Build solution SqlServerDatabase.sln'
-  inputs:
-    solution: SqlServerDatabase.sln
-    msbuildArguments: '/p:OutDir=$(Build.ArtifactStagingDirectory)'
+    - task: MSBuild@1
+      displayName: 'Build solution SqlServerDatabase.sln'
+      inputs:
+        solution: SqlServerDatabase.sln
+        msbuildArguments: '/p:OutDir=$(Build.ArtifactStagingDirectory)'
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: drop'
+
+- stage: Deploy
+  jobs:
+  - job: Deploy
+
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+    - task: SqlAzureDacpacDeployment@1
+      displayName: 'Azure SQL DacpacTask'
+      inputs:
+        azureSubscription: 'Free Trial (3128b286-876c-43ac-840a-3063ff7ad107)'
+        AuthenticationType: connectionString
+        ConnectionString: '$(ConnectionString)'
+        DacpacFile: '$(System.DefaultWorkingDirectory)/_SqlServer-Database-Demo-CI/drop/SqlServerDatabase.dacpac'
