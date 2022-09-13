@@ -47,4 +47,4 @@ stages:
         azureSubscription: 'Free Trial (3128b286-876c-43ac-840a-3063ff7ad107)'
         AuthenticationType: connectionString
         ConnectionString: Server=tcp:sqlserver-database-practise.database.windows.net,1433;Initial Catalog=Products;Persist Security Info=False;User ID=Ankit;Password=Data@12345;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
-        DacpacFile: '$(System.ArtifactsDirectory)/drop/'
+        DacpacFile: '$(System.DefaultWorkingDirectory)/_SqlServer-Database-Demo-CI/drop/SqlServerDatabase.dacpac'
