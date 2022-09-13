@@ -32,10 +32,7 @@ stages:
         msbuildArguments: '/p:OutDir=$(Build.ArtifactStagingDirectory)'
 
     - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(Build.Repository.LocalPath)/AzureSQL/bin/Release/'
-        ArtifactName: 'drop'
-        publishLocation: 'Container'
+      displayName: 'Publish Artifact: drop'
 
     - script: echo $System.DefaultWorkingDirectory
 
