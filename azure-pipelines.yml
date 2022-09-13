@@ -34,6 +34,8 @@ stages:
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact: drop'
 
+    - script: echo $System.DefaultWorkingDirectory
+
 - stage: Deploy
   jobs:
   - job: Deploy
