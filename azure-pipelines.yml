@@ -40,6 +40,9 @@ stages:
   jobs:
   - job: Deploy
 
+    pool:
+      vmImage: 'windows-2019'
+      
     steps:
     - task: SqlAzureDacpacDeployment@1
       displayName: 'Azure SQL DacpacTask'
