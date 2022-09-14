@@ -44,11 +44,17 @@ stages:
       vmImage: 'windows-2019'
       
     steps:
+    - task: DownloadBuildArtifacts@1
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'drop'
+        downloadPath: '$(System.ArtifactsDirectory)'
     - task: SqlAzureDacpacDeployment@1
       displayName: 'Azure SQL DacpacTask'
       inputs:
         azureSubscription: 'Free Trial (3128b286-876c-43ac-840a-3063ff7ad107)'
         AuthenticationType: connectionString
-        ConnectionString: Server=tcp:sqlserver-database-practise.database.windows.net,1433;Initial Catalog=Products;Persist Security Info=False;User ID=Ankit;Password=Data@12345;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
-        DacpacFile: 'https://dev.azure.com/corpankitmehra/_apis/resources/Containers/24642325/drop?itemPath=drop%2FSqlServerDatabase.dacpac\_SqlServer-Database-Demo-CI\drop\SqlServerDatabase.dacpac'
+        ConnectionString: Server=tcp:sqlserver-database-practise.database.windows.net,1433;Initial Catalog=Products;Persist Security Info=False;User ID=Ankit;Password=Data@12345;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;     
+        DacpacFile: '$(System.DefaultWorkingDirectory)\_SqlServer-Database-Demo-CI\drop\SqlServerDatabase.dacpac'
         
