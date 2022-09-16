@@ -9,11 +9,6 @@ trigger:
 pool:
   vmImage: 'windows-2019'
 
-variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
-
 steps:
 - template: CI.yml
 - template: Deployment.yml
