@@ -35,7 +35,6 @@ stages:
       displayName: 'Publish Artifact: drop'
 
     - script: echo $System.DefaultWorkingDirectory
-    - template: Deployment.yaml
 
 - stage: Deploy
   jobs:
