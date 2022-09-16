@@ -5,11 +5,58 @@
 
 trigger:
 - master
+stages: 
+- stage: Build
+  jobs:
+  - job: Build
 
-pool:
-  vmImage: 'windows-2019'
+    pool:
+      vmImage: 'windows-2019'
 
-steps:
-- template: CI.yml
-- template: Deployment.yml
+    variables:
+      solution: '**/*.sln'
+      buildPlatform: 'Any CPU'
+      buildConfiguration: 'Release'
 
+    steps:
+    - task: NuGetToolInstaller@1
+
+    - task: NuGetCommand@2
+      inputs:
+        restoreSolution: '$(solution)'
+
+    - task: MSBuild@1
+      displayName: 'Build solution SqlServerDatabase.sln'
+      inputs:
+        solution: SqlServerDatabase.sln
+        msbuildArguments: '/p:OutDir=$(Build.ArtifactStagingDirectory)'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: drop'
+
+    - script: echo $System.DefaultWorkingDirectory
+    - template: Deployment.yaml
+
+- stage: Deploy
+  jobs:
+  - job: Deploy
+
+    pool:
+      vmImage: 'windows-2019'
+      
+    steps:
+    - task: DownloadBuildArtifacts@1
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'drop'
+        downloadPath: '$(System.ArtifactsDirectory)'
+
+    - task: SqlAzureDacpacDeployment@1
+      displayName: 'Azure SQL DacpacTask'
+      inputs:
+        azureSubscription: 'Free Trial (3128b286-876c-43ac-840a-3063ff7ad107)'
+        AuthenticationType: connectionString
+        ConnectionString: Server=tcp:sqlserver-database-practise.database.windows.net,1433;Initial Catalog=Products;Persist Security Info=False;User ID=Ankit;Password=Data@12345;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;     
+        DacpacFile: 'D:\a\1\a\drop/SqlServerDatabase.dacpac'
+        
